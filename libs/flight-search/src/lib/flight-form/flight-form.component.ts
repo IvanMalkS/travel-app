@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { v4 as uuidv4 } from 'uuid';
 import { Airport, AIRPORTS, Flight } from '../models';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'lib-flight-form',
@@ -67,25 +68,38 @@ export class FlightFormComponent {
   });
 
   constructor() {
-    this.form.controls.origin.valueChanges.subscribe((origin) => {
-      const currentDest = this.form.controls.destination.value;
-      if (origin && currentDest && origin.code === currentDest.code) {
-        this.form.controls.destination.reset();
-      }
-    });
+    this.form.controls.origin.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((origin) => {
+        const currentDest = this.form.controls.destination.value;
+        if (origin && currentDest && origin.code === currentDest.code) {
+          this.form.controls.destination.reset();
+        }
+      });
   }
 
   protected submit(): void {
     if (this.form.invalid) return;
 
-    const val = this.form.value;
-    const date = val.date!;
+    const val = this.form.getRawValue();
+
+    if (
+      !val.date ||
+      !val.depTime ||
+      !val.arrTime ||
+      !val.origin ||
+      !val.destination
+    ) {
+      return;
+    }
+
+    const date = val.date;
 
     const departureTime = new Date(date);
-    departureTime.setHours(+val.depTime!);
+    departureTime.setHours(+val.depTime);
 
     const arrivalTime = new Date(date);
-    arrivalTime.setHours(+val.arrTime!);
+    arrivalTime.setHours(+val.arrTime);
 
     if (arrivalTime <= departureTime) {
       arrivalTime.setDate(arrivalTime.getDate() + 1);
@@ -93,8 +107,8 @@ export class FlightFormComponent {
 
     const flight: Flight = {
       id: uuidv4(),
-      origin: val.origin!,
-      destination: val.destination!,
+      origin: val.origin,
+      destination: val.destination,
       departureTime,
       arrivalTime,
     };
