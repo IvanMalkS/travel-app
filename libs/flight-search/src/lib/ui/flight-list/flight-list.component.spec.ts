@@ -3,10 +3,9 @@ import { FlightListComponent } from './flight-list.component';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatTabGroupHarness } from '@angular/material/tabs/testing';
 import { MatCardHarness } from '@angular/material/card/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { Flight, Segment } from '../../models';
+import { Flight } from '../../models/flight.interface';
 import { By } from '@angular/platform-browser';
 
 describe('FlightListComponent', () => {
@@ -16,15 +15,10 @@ describe('FlightListComponent', () => {
 
   const mockFlight: Flight = {
     id: 'f1',
-    origin: { code: 'OVB', city: 'Novosibirsk' },
-    destination: { code: 'MOW', city: 'Moscow' },
+    origin: { code: 'OVB', city: 'Новосибирск' },
+    destination: { code: 'MOW', city: 'Москва' },
     departureTime: new Date('2025-10-05T12:00:00'),
     arrivalTime: new Date('2025-10-05T16:00:00'),
-  };
-
-  const mockSegment: Segment = {
-    flights: [mockFlight],
-    totalDuration: '4h',
   };
 
   beforeEach(async () => {
@@ -37,7 +31,6 @@ describe('FlightListComponent', () => {
     component = fixture.componentInstance;
 
     fixture.componentRef.setInput('flights', []);
-    fixture.componentRef.setInput('segments', []);
 
     fixture.detectChanges();
     loader = TestbedHarnessEnvironment.loader(fixture);
@@ -47,79 +40,46 @@ describe('FlightListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('Flights Tab', () => {
-    it('should show empty state when no flights', () => {
-      fixture.componentRef.setInput('flights', []);
-      fixture.detectChanges();
+  it('should show empty state when no flights provided', () => {
+    fixture.componentRef.setInput('flights', []);
+    fixture.detectChanges();
 
-      const text = fixture.nativeElement.textContent;
-      expect(text).toContain('Нет добавленных перелетов');
-    });
-
-    it('should render flight details including Year', async () => {
-      fixture.componentRef.setInput('flights', [mockFlight]);
-      fixture.detectChanges();
-
-      const card = await loader.getHarness(
-        MatCardHarness.with({ selector: '.flight-card' }),
-      );
-      const text = await card.getText();
-
-      expect(text).toContain('Novosibirsk');
-      expect(text).toContain('05.10.2025 12:00');
-    });
-
-    it('should emit delete event with flight ID on button click', async () => {
-      fixture.componentRef.setInput('flights', [mockFlight]);
-      fixture.detectChanges();
-
-      const deleteSpy = jest.spyOn(component.delete, 'emit');
-
-      const deleteBtn = await loader.getHarness(
-        MatButtonHarness.with({ text: 'delete' }),
-      );
-      await deleteBtn.click();
-
-      expect(deleteSpy).toHaveBeenCalledWith(mockFlight.id);
-    });
+    const emptyState = fixture.debugElement.query(By.css('.empty-state'));
+    expect(emptyState).toBeTruthy();
+    expect(emptyState.nativeElement.textContent).toContain(
+      'Нет добавленных перелетов',
+    );
   });
 
-  describe('Segments Tab', () => {
-    it('should show segments content when switching tab', async () => {
-      fixture.componentRef.setInput('segments', [mockSegment]);
-      fixture.detectChanges();
+  it('should render flight card with correct details', async () => {
+    fixture.componentRef.setInput('flights', [mockFlight]);
+    fixture.detectChanges();
 
-      const tabGroup = await loader.getHarness(MatTabGroupHarness);
-      await tabGroup.selectTab({ label: 'Сегменты' });
+    const cards = await loader.getAllHarnesses(
+      MatCardHarness.with({ selector: '.flight-card' }),
+    );
+    expect(cards.length).toBe(1);
 
-      fixture.detectChanges();
+    const cardText = await cards[0].getText();
 
-      const segmentCard = await loader.getHarness(
-        MatCardHarness.with({ selector: '.segment-card' }),
-      );
+    expect(cardText).toContain('Новосибирск');
+    expect(cardText).toContain('OVB');
+    expect(cardText).toContain('Москва');
 
-      const title = await segmentCard.getTitleText();
-      expect(title).toContain('Маршрут #1');
+    expect(cardText).toContain('05.10.2025 12:00');
+  });
 
-      const content = await segmentCard.getText();
-      expect(content).toContain('Novosibirsk');
-    });
+  it('should emit delete event with flight ID when delete button is clicked', async () => {
+    fixture.componentRef.setInput('flights', [mockFlight]);
+    fixture.detectChanges();
 
-    it('should show empty state in segments tab', async () => {
-      fixture.componentRef.setInput('segments', []);
-      fixture.detectChanges();
+    let deletedId: string | undefined;
+    component.delete.subscribe((id) => (deletedId = id));
 
-      const tabGroup = await loader.getHarness(MatTabGroupHarness);
-      await tabGroup.selectTab({ label: 'Сегменты' });
+    const deleteBtn = await loader.getHarness(MatButtonHarness);
 
-      fixture.detectChanges();
+    await deleteBtn.click();
 
-      const emptyStates = fixture.debugElement.queryAll(By.css('.empty-state'));
-      const segmentMsg = emptyStates.find((el) =>
-        el.nativeElement.textContent.includes('Нет маршрутов'),
-      );
-
-      expect(segmentMsg).toBeTruthy();
-    });
+    expect(deletedId).toBe('f1');
   });
 });

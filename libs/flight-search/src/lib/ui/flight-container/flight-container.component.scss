@@ -9,10 +9,40 @@
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 24px;
+  align-items: start;
+}
+
+.desktop-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.section h3 {
+  margin-bottom: 16px;
+  color: var(--mat-sys-primary);
+  border-bottom: 1px solid var(--mat-sys-outline);
+  padding-bottom: 8px;
+}
+
+.mobile-content {
+  display: none;
+}
+
+.tab-wrapper {
+  padding-top: 16px;
 }
 
 @media (max-width: 768px) {
   .layout {
     grid-template-columns: 1fr;
+  }
+
+  .desktop-content {
+    display: none;
+  }
+
+  .mobile-content {
+    display: block;
   }
 }

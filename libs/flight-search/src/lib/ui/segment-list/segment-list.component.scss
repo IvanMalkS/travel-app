@@ -3,16 +3,23 @@
   flex-direction: column;
   gap: 12px;
 }
-.flight-card {
+.segment-card {
   margin-bottom: 8px;
 }
-.flight-info {
-  font-size: 16px;
-  margin-bottom: 4px;
+.stepper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
 }
-.flight-time {
+.arrow {
   color: color-mix(in srgb, var(--mat-sys-on-surface) 60%, transparent);
-  font-size: 14px;
+}
+.step {
+  display: flex;
+  gap: 8px;
+  font-weight: 500;
 }
 .empty-state {
   text-align: center;

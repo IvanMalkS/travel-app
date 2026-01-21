@@ -3,7 +3,8 @@ import { FlightContainerComponent } from './flight-container.component';
 import { FlightService } from '../../services/flight/flight.service';
 import { signal, WritableSignal } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { Flight, Segment, Airport } from '../../models';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { Flight, Segment } from '../../models';
 
 jest.mock('uuid', () => ({
   v4: () => 'test-uuid-container',
@@ -23,7 +24,10 @@ describe('FlightContainerComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FlightContainerComponent],
-      providers: [{ provide: FlightService, useValue: mockFlightService }],
+      providers: [
+        { provide: FlightService, useValue: mockFlightService },
+        provideNoopAnimations(),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FlightContainerComponent);
@@ -48,15 +52,12 @@ describe('FlightContainerComponent', () => {
       );
       expect(formDebugElement).toBeTruthy();
 
-      const mockOrigin: Airport = { code: 'OVB', city: 'Новосибирск' };
-      const mockDest: Airport = { code: 'SVO', city: 'Москва' };
-
       const mockFlight: Flight = {
         id: 'test-id-1',
-        origin: mockOrigin,
-        destination: mockDest,
-        departureTime: new Date('2025-01-01T10:00:00'),
-        arrivalTime: new Date('2025-01-01T14:00:00'),
+        origin: { code: 'OVB', city: 'Новосибирск' },
+        destination: { code: 'SVO', city: 'Москва' },
+        departureTime: new Date(),
+        arrivalTime: new Date(),
       };
 
       formDebugElement.triggerEventHandler('add', mockFlight);
@@ -67,7 +68,7 @@ describe('FlightContainerComponent', () => {
   });
 
   describe('Integration with FlightListComponent', () => {
-    it('should pass data from service signals to list inputs', () => {
+    it('should pass flights data to list input', () => {
       const mockFlights: Flight[] = [
         {
           id: 'f1',
@@ -78,18 +79,7 @@ describe('FlightContainerComponent', () => {
         },
       ];
 
-      const mockSegments: Segment[] = [
-        {
-          flights: mockFlights,
-          totalDuration: '2h',
-        },
-      ];
-
       (mockFlightService.flights as WritableSignal<Flight[]>).set(mockFlights);
-      (mockFlightService.segments as WritableSignal<Segment[]>).set(
-        mockSegments,
-      );
-
       fixture.detectChanges();
 
       const listDebugElement = fixture.debugElement.query(
@@ -98,7 +88,6 @@ describe('FlightContainerComponent', () => {
       const listComponentInstance = listDebugElement.componentInstance;
 
       expect(listComponentInstance.flights()).toEqual(mockFlights);
-      expect(listComponentInstance.segments()).toEqual(mockSegments);
     });
 
     it('should call service.removeFlight when list emits "delete" event', () => {
@@ -113,6 +102,31 @@ describe('FlightContainerComponent', () => {
       expect(mockFlightService.removeFlight).toHaveBeenCalledWith(
         flightIdToDelete,
       );
+    });
+  });
+
+  describe('Integration with SegmentListComponent', () => {
+    it('should pass segments data to segment list input', () => {
+      const mockSegments: Segment[] = [
+        {
+          flights: [],
+          totalDuration: '5h',
+        },
+      ];
+
+      (mockFlightService.segments as WritableSignal<Segment[]>).set(
+        mockSegments,
+      );
+      fixture.detectChanges();
+
+      const segmentListDebugElement = fixture.debugElement.query(
+        By.css('lib-segment-list'),
+      );
+
+      expect(segmentListDebugElement).toBeTruthy();
+
+      const instance = segmentListDebugElement.componentInstance;
+      expect(instance.segments()).toEqual(mockSegments);
     });
   });
 });

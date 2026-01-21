@@ -9,12 +9,42 @@
     </div>
 
     <div class="right-panel">
-      <lib-flight-list
-        [flights]="flightService.flights()"
-        [segments]="flightService.segments()"
-        (delete)="flightService.removeFlight($event)"
-      >
-      </lib-flight-list>
+      <div class="desktop-content">
+        <div class="section">
+          <h3>Все перелеты</h3>
+          <lib-flight-list
+            [flights]="flightService.flights()"
+            (delete)="flightService.removeFlight($event)"
+          >
+          </lib-flight-list>
+        </div>
+
+        <div class="section">
+          <h3>Сложные маршруты</h3>
+          <lib-segment-list [segments]="flightService.segments()">
+          </lib-segment-list>
+        </div>
+      </div>
+
+      <div class="mobile-content">
+        <mat-tab-group animationDuration="0ms">
+          <mat-tab label="Все перелеты">
+            <div class="tab-wrapper">
+              <lib-flight-list
+                [flights]="flightService.flights()"
+                (delete)="flightService.removeFlight($event)"
+              >
+              </lib-flight-list>
+            </div>
+          </mat-tab>
+          <mat-tab label="Сегменты">
+            <div class="tab-wrapper">
+              <lib-segment-list [segments]="flightService.segments()">
+              </lib-segment-list>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
     </div>
   </div>
 </div>

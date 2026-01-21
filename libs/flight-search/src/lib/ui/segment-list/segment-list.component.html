@@ -1,0 +1,27 @@
+<div class="list-container">
+  @for (segment of segments(); track $index) {
+    <mat-card class="segment-card">
+      <mat-card-header>
+        <mat-card-title>Маршрут #{{ $index + 1 }}</mat-card-title>
+        <mat-card-subtitle
+          >{{ segment.flights.length }} пересадок</mat-card-subtitle
+        >
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stepper">
+          @for (flight of segment.flights; track flight.id; let last = $last) {
+            <div class="step">
+              <span class="city">{{ flight.origin.city }}</span>
+              <span class="arrow">→</span>
+              @if (last) {
+                <span class="city">{{ flight.destination.city }}</span>
+              }
+            </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  } @empty {
+    <p class="empty-state">Маршрутов пока нет</p>
+  }
+</div>
