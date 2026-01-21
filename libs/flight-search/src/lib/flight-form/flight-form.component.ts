@@ -1,4 +1,10 @@
-import { Component, computed, inject, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  output,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
@@ -20,7 +26,7 @@ import { Airport, AIRPORTS, Flight } from '../models';
 
 @Component({
   selector: 'lib-flight-form',
-  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
     MatAutocompleteModule,
