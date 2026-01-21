@@ -1,0 +1,68 @@
+<mat-tab-group>
+  <mat-tab label="Все перелеты">
+    <div class="list-container">
+      @for (flight of flights(); track flight.id) {
+        <mat-card class="flight-card">
+          <mat-card-content>
+            <div class="flight-info">
+              <strong>{{ flight.origin.city }}</strong> ({{
+                flight.origin.code
+              }}) → <strong>{{ flight.destination.city }}</strong> ({{
+                flight.destination.code
+              }})
+            </div>
+            <div class="flight-time">
+              {{ flight.departureTime | date: 'dd.MM HH:mm' }} -
+              {{ flight.arrivalTime | date: 'dd.MM HH:mm' }}
+            </div>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="delete.emit(flight.id)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      } @empty {
+        <p class="empty-state">Нет добавленных перелетов</p>
+      }
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Маршруты (Сегменты)">
+    <div class="list-container">
+      @for (segment of segments(); track $index) {
+        <mat-card class="segment-card">
+          <mat-card-header>
+            <mat-card-title>Маршрут #{{ $index + 1 }}</mat-card-title>
+            <mat-card-subtitle
+              >{{ segment.flights.length }} пересадок</mat-card-subtitle
+            >
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stepper">
+              @for (
+                flight of segment.flights;
+                track flight.id;
+                let last = $last
+              ) {
+                <div class="step">
+                  <span class="city">{{ flight.origin.city }}</span>
+                  <span class="arrow">→</span>
+                  @if (last) {
+                    <span class="city">{{ flight.destination.city }}</span>
+                  }
+                </div>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      } @empty {
+        <p class="empty-state">Нет маршрутов</p>
+      }
+    </div>
+  </mat-tab>
+</mat-tab-group>

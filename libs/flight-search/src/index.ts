@@ -1,1 +1,2 @@
-export * from './lib/flight-search/flight-search';
+export * from './lib/flight-container/flight-container.component';
+export * from './lib/models';

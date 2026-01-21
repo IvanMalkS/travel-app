@@ -1,0 +1,43 @@
+.list-container {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.flight-card,
+.segment-card {
+  margin-bottom: 8px;
+}
+
+.flight-info {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.flight-time {
+  color: gray;
+  font-size: 14px;
+}
+
+.empty-state {
+  text-align: center;
+  color: gray;
+  padding: 20px;
+}
+
+.stepper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.arrow {
+  color: gray;
+}
+
+.step {
+  display: flex;
+  gap: 8px;
+}

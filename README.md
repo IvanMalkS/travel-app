@@ -1,82 +1,84 @@
 # TravelApp
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+## Задание
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+В качестве приложения нужно сделать констурктор сложных маршрутов, которые будут объединяться в сегменты.
+Все это выглядит в виде формы, где можно добавить маршрут:
+вылет: Новосибирск (OVB), 10.01.2026, 19.00
+прибытие: Москва (SVO) 10.01.2026, 19.30
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+Допустим добавляем 5 перелетов:
+Новосибирск (OVB), 10.01.2026, 19.00 -> Москва (SVO) 10.01.2026, 19.30
+Москва (SVO) 11.01.2026, 00.00 -> Стамбул (IST) 11.01.2026, 04.00
+Стамбул (IST) 13.01.2026, 12.00 -> Новосибирск (OVB) 13.01.2026, 21.00
+Москва (SVO) 15.01.2026, 19.30 -> Новосибирск (OVB), 16.01.2026, 03.00
+Новосибирск (OVB), 20.01.2026, 06.50 -> Москва (SVO) 20.01.2026, 07.30
 
-## Finish your remote caching setup
+Мы должны увидеть 2 длинных маршрута:
+Новосибирск -> Москва -> Стамбул -> Новосибирск
+Москва -> Новосибирск -> Москва
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/RVJL7mfCLf)
+Маршруты должны объединяться по дате вылета и времени прилета.
 
+Например, перелеты будут 2 маршрутами, но не одним сегментом:
+Новосибирск (OVB), 10.01.2026, 19.00 -> Москва (SVO) 10.01.2026, 19.30
+Москва (SVO) 10.01.2026, 19.00 -> Стамбул (IST) 10.01.2026, 23.50
 
-## Run tasks
+Новосибирск -> Москва
+Москва -> Стамбул
 
-To run the dev server for your app, use:
+Что нужно в интерфейсе:
 
-```sh
+- формочка где можно создать перелет (откуда, куда)
+- для простоты взять 10 аэропортов и использовать их в автокомплите в форме
+- для выбора даты использовать datepicker
+- для времени для простоты сказать, что вылеты через час в ровно 00.00, 01.00, 02.00, как и прилеты
+
+Для desktop:
+[ форма ]
+[ список перелетов ][ список сегментов ]
+
+Для мобилки это не подойдет, и можно запихать это в табы:
+[ форма ]
+[ перелеты ][ сегменты ]
+[ Список перелетов/сегментов ]
+
+Что нужно в коде:
+
+- Создать новое приложение (angular/cli или в монорепе Nx)
+- Создать компонент, который будет страницей, который будет содержать все компоненты
+- Разнести форму, списки и прочее на разные компоненты
+- Логика должна быть в DI сервисах
+- Для отображения использовать signal
+- Для формы использовать angular/forms и/или signal-forms
+
+Желательно добавить рекомендации от сообщества angular-eslint.
+
+Для повышения сложности можно добавить еще 2 вещи
+
+- Написать тесты на сервисы и компоненты
+- Добавить локальное сохранение (например в localStorage)
+- Добавить SSR и убедиться, что работает сохранение в хранилище.
+
+## Реализация
+
+### Стек технологий
+
+- **Core:** Angular 21.
+- **Architecture:** (Integrated Monorepo) - это оверхед, но решил на нём для практики писать.
+- **State Management:** Angular Signals - очень приятная штука, в реакте такого нет. NgRx - здесь полнейший оверхед.
+- **Rendering:** SSR.
+- **UI Library:** Angular Material - для использование готовых компонентов.
+- **Forms:** Reactive Forms - для типизации данных формы.
+- **Testing:** Jest - для Unit-тестирования.
+- **Utils:** `uuid` - для генерации уникальных ID.
+
+### Запуск проекта
+
+```bash
+npm install
+
 npx nx serve flight-planner
+
+npx nx test flight-search
 ```
-
-To create a production bundle:
-
-```sh
-npx nx build flight-planner
-```
-
-To see all available targets to run for a project, run:
-
-```sh
-npx nx show project flight-planner
-```
-
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
-
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/angular:app demo
-```
-
-To generate a new library, use:
-
-```sh
-npx nx g @nx/angular:lib mylib
-```
-
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
-
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)

@@ -1,0 +1,20 @@
+<div class="container">
+  <h1>Конструктор маршрутов</h1>
+
+  <div class="layout">
+    <div class="left-panel">
+      <lib-flight-form
+        (add)="flightService.addFlight($event)"
+      ></lib-flight-form>
+    </div>
+
+    <div class="right-panel">
+      <lib-flight-list
+        [flights]="flightService.flights()"
+        [segments]="flightService.segments()"
+        (delete)="flightService.removeFlight($event)"
+      >
+      </lib-flight-list>
+    </div>
+  </div>
+</div>
