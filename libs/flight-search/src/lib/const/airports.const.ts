@@ -1,20 +1,4 @@
-export interface Airport {
-  code: string;
-  city: string;
-}
-
-export interface Flight {
-  id: string;
-  origin: Airport;
-  destination: Airport;
-  departureTime: Date;
-  arrivalTime: Date;
-}
-
-export interface Segment {
-  flights: Flight[];
-  totalDuration?: string;
-}
+import { Airport } from '../models/airport.interface';
 
 export const AIRPORTS: Airport[] = [
   { code: 'OVB', city: 'Новосибирск' },
@@ -28,11 +12,3 @@ export const AIRPORTS: Airport[] = [
   { code: 'BER', city: 'Берлин' },
   { code: 'BKK', city: 'Бангкок' },
 ];
-
-export type FlightRawFromJson = Omit<
-  Flight,
-  'departureTime' | 'arrivalTime'
-> & {
-  departureTime: string;
-  arrivalTime: string;
-};
