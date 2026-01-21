@@ -1,15 +1,22 @@
 import { Component, computed, inject, output } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+  ValidatorFn,
+} from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { v4 as uuidv4 } from 'uuid';
 import { Airport, AIRPORTS, Flight } from '../models';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'lib-flight-form',
@@ -30,25 +37,21 @@ export class FlightFormComponent {
   readonly add = output<Flight>();
 
   protected readonly airports = AIRPORTS;
-  protected readonly hours = this.generateHours();
-
   private readonly fb = inject(FormBuilder);
 
-  private generateHours(): string[] {
-    const hours: string[] = [];
-    for (let i = 0; i < 24; i++) {
-      hours.push(i.toString().padStart(2, '0'));
-    }
-    return hours;
-  }
-
-  protected readonly form = this.fb.group({
-    origin: [null as Airport | null, Validators.required],
-    destination: [null as Airport | null, Validators.required],
-    date: [new Date(), Validators.required],
-    depTime: ['12', Validators.required],
-    arrTime: ['14', Validators.required],
-  });
+  protected readonly form = this.fb.group(
+    {
+      origin: [null as Airport | null, Validators.required],
+      destination: [null as Airport | null, Validators.required],
+      depDate: [new Date(), Validators.required],
+      depTime: ['12:00', Validators.required],
+      arrDate: [new Date(), Validators.required],
+      arrTime: ['14:30', Validators.required],
+    },
+    {
+      validators: [arrivalTimeValidator],
+    },
+  );
 
   private readonly selectedOrigin = toSignal(
     this.form.controls.origin.valueChanges,
@@ -57,13 +60,16 @@ export class FlightFormComponent {
     },
   );
 
+  protected readonly minArrivalDate = toSignal(
+    this.form.controls.depDate.valueChanges,
+    {
+      initialValue: this.form.controls.depDate.value,
+    },
+  );
+
   protected readonly destinationAirports = computed(() => {
     const origin = this.selectedOrigin();
-
-    if (!origin) {
-      return this.airports;
-    }
-
+    if (!origin) return this.airports;
     return this.airports.filter((airport) => airport.code !== origin.code);
   });
 
@@ -76,6 +82,14 @@ export class FlightFormComponent {
           this.form.controls.destination.reset();
         }
       });
+
+    this.form.controls.depDate.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((date) => {
+        if (date) {
+          this.form.controls.arrDate.setValue(date);
+        }
+      });
   }
 
   protected submit(): void {
@@ -84,8 +98,9 @@ export class FlightFormComponent {
     const val = this.form.getRawValue();
 
     if (
-      !val.date ||
+      !val.depDate ||
       !val.depTime ||
+      !val.arrDate ||
       !val.arrTime ||
       !val.origin ||
       !val.destination
@@ -93,13 +108,8 @@ export class FlightFormComponent {
       return;
     }
 
-    const date = val.date;
-
-    const departureTime = new Date(date);
-    departureTime.setHours(+val.depTime);
-
-    const arrivalTime = new Date(date);
-    arrivalTime.setHours(+val.arrTime);
+    const departureTime = this.setTime(new Date(val.depDate), val.depTime);
+    const arrivalTime = this.setTime(new Date(val.arrDate), val.arrTime);
 
     if (arrivalTime <= departureTime) {
       arrivalTime.setDate(arrivalTime.getDate() + 1);
@@ -115,6 +125,43 @@ export class FlightFormComponent {
 
     this.add.emit(flight);
 
-    this.form.patchValue({ origin: val.destination, destination: null });
+    this.form.patchValue({
+      origin: val.destination,
+      destination: null,
+      depDate: val.arrDate,
+      arrDate: val.arrDate,
+    });
+  }
+
+  private setTime(date: Date, timeStr: string): Date {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    const newDate = new Date(date);
+    newDate.setHours(hours || 0, minutes || 0, 0, 0);
+    return newDate;
   }
 }
+
+export const arrivalTimeValidator: ValidatorFn = (
+  group: AbstractControl,
+): ValidationErrors | null => {
+  const val = group.getRawValue();
+
+  if (!val.depDate || !val.depTime || !val.arrDate || !val.arrTime) {
+    return null;
+  }
+
+  const [depHours, depMinutes] = val.depTime.split(':').map(Number);
+  const [arrHours, arrMinutes] = val.arrTime.split(':').map(Number);
+
+  const dep = new Date(val.depDate);
+  dep.setHours(depHours, depMinutes);
+
+  const arr = new Date(val.arrDate);
+  arr.setHours(arrHours, arrMinutes);
+
+  if (arr <= dep) {
+    return { arrivalInvalid: true };
+  }
+
+  return null;
+};

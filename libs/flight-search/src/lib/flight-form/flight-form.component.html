@@ -28,32 +28,47 @@
   <div class="row">
     <mat-form-field appearance="outline">
       <mat-label>Дата вылета</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="date" />
+      <input matInput [matDatepicker]="pickerDep" formControlName="depDate" />
       <mat-datepicker-toggle
         matIconSuffix
-        [for]="picker"
+        [for]="pickerDep"
       ></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
+      <mat-datepicker #pickerDep></mat-datepicker>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Время вылета</mat-label>
-      <mat-select formControlName="depTime">
-        @for (hour of hours; track hour) {
-          <mat-option [value]="hour">{{ hour }}:00</mat-option>
-        }
-      </mat-select>
+      <input matInput type="time" formControlName="depTime" />
+    </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field appearance="outline">
+      <mat-label>Дата прилета</mat-label>
+      <input
+        matInput
+        [matDatepicker]="pickerArr"
+        formControlName="arrDate"
+        [min]="minArrivalDate()"
+      />
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="pickerArr"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #pickerArr></mat-datepicker>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Время прилета</mat-label>
-      <mat-select formControlName="arrTime">
-        @for (hour of hours; track hour) {
-          <mat-option [value]="hour">{{ hour }}:00</mat-option>
-        }
-      </mat-select>
+      <input matInput type="time" formControlName="arrTime" />
     </mat-form-field>
   </div>
+
+  @if (form.hasError('arrivalInvalid') && form.touched) {
+    <div class="error-message">
+      Ошибка: Время прилета не может быть раньше времени вылета.
+    </div>
+  }
 
   <button
     mat-raised-button

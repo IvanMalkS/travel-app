@@ -17,3 +17,10 @@ mat-form-field {
   flex: 1;
   min-width: 140px;
 }
+
+.error-message {
+  color: #f44336;
+  font-size: 14px;
+  margin-top: -8px;
+  margin-bottom: 8px;
+}
