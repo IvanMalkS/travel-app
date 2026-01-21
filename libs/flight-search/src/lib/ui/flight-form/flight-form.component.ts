@@ -22,8 +22,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { v4 as uuidv4 } from 'uuid';
-import { Airport, Flight } from '../models';
-import { AIRPORTS } from '../const';
+import { Airport, Flight } from '../../models';
+import { AIRPORTS } from '../../const';
 
 @Component({
   selector: 'lib-flight-form',

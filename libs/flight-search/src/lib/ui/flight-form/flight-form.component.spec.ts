@@ -7,7 +7,7 @@ import { MatSelectHarness } from '@angular/material/select/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { By } from '@angular/platform-browser';
-import { AIRPORTS } from '../const';
+import { AIRPORTS } from '../../const';
 
 jest.mock('uuid', () => ({
   v4: () => 'test-uuid-1234',

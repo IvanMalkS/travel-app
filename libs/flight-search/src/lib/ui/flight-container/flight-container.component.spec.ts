@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FlightContainerComponent } from './flight-container.component';
-import { FlightService } from '../services/flight/flight.service';
+import { FlightService } from '../../services/flight/flight.service';
 import { signal, WritableSignal } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { Flight, Segment, Airport } from '../models';
+import { Flight, Segment, Airport } from '../../models';
 
 jest.mock('uuid', () => ({
   v4: () => 'test-uuid-container',

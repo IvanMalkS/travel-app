@@ -6,7 +6,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatTabGroupHarness } from '@angular/material/tabs/testing';
 import { MatCardHarness } from '@angular/material/card/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { Flight, Segment } from '../models';
+import { Flight, Segment } from '../../models';
 import { By } from '@angular/platform-browser';
 
 describe('FlightListComponent', () => {
