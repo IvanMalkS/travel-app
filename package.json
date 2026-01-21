@@ -3,11 +3,16 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "start": "nx serve flight-planner",
+    "build": "nx build flight-planner",
+    "test": "nx test flight-search",
+    "lint": "nx run-many -t lint",
     "prepare": "husky"
   },
   "private": true,
   "dependencies": {
     "@angular-devkit/build-angular": "~21.0.0",
+    "@angular/animations": "^21.0.9",
     "@angular/cdk": "^21.1.0",
     "@angular/common": "~21.0.0",
     "@angular/compiler": "~21.0.0",
