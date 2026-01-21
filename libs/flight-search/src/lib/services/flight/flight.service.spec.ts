@@ -1,11 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { FlightService } from './flight.service';
 import { StorageService } from '../storage-service/storage.service';
-import { Flight, Airport, FlightRawFromJson, Segment } from '../../models';
+import { Flight, Airport, FlightRawFromJson } from '../../models';
 
 const mockAirportA: Airport = { code: 'A', city: 'City A' };
 const mockAirportB: Airport = { code: 'B', city: 'City B' };
-const mockAirportC: Airport = { code: 'C', city: 'City C' };
 
 function createFlight(
   id: string,
