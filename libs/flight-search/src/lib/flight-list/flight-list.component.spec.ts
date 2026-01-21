@@ -90,7 +90,7 @@ describe('FlightListComponent', () => {
       fixture.detectChanges();
 
       const tabGroup = await loader.getHarness(MatTabGroupHarness);
-      await tabGroup.selectTab({ label: 'Маршруты (Сегменты)' });
+      await tabGroup.selectTab({ label: 'Сегменты' });
 
       fixture.detectChanges();
 
@@ -110,7 +110,7 @@ describe('FlightListComponent', () => {
       fixture.detectChanges();
 
       const tabGroup = await loader.getHarness(MatTabGroupHarness);
-      await tabGroup.selectTab({ label: 'Маршруты (Сегменты)' });
+      await tabGroup.selectTab({ label: 'Сегменты' });
 
       fixture.detectChanges();
 
