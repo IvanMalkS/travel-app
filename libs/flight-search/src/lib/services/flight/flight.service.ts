@@ -1,6 +1,7 @@
 import { Injectable, signal, computed, inject, effect } from '@angular/core';
-import { Flight, FlightRawFromJson, Segment } from '../../models';
+import { Flight, FlightRawFromJson } from '../../models';
 import { StorageService } from '../storage-service/storage.service';
+import { buildSegments } from '../../utils/flight-calculations.util';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,7 @@ export class FlightService {
   private readonly _flights = signal<Flight[]>([]);
 
   readonly flights = this._flights.asReadonly();
-  readonly segments = computed(() => this.buildSegments(this._flights()));
+  readonly segments = computed(() => buildSegments(this._flights()));
 
   constructor() {
     this.initFromStorage();
@@ -33,33 +34,6 @@ export class FlightService {
 
   removeFlight(id: string): void {
     this._flights.update((list) => list.filter((flight) => flight.id !== id));
-  }
-
-  private buildSegments(flights: Flight[]): Segment[] {
-    if (flights.length === 0) return [];
-
-    const segments: Segment[] = [];
-    let currentSegment: Flight[] = [flights[0]];
-
-    for (let i = 1; i < flights.length; i++) {
-      const prev = currentSegment[currentSegment.length - 1];
-      const curr = flights[i];
-
-      const isConnected =
-        prev.destination.code === curr.origin.code &&
-        curr.departureTime.getTime() >= prev.arrivalTime.getTime();
-
-      if (isConnected) {
-        currentSegment.push(curr);
-      } else {
-        segments.push({ flights: [...currentSegment] });
-        currentSegment = [curr];
-      }
-    }
-
-    segments.push({ flights: currentSegment });
-
-    return segments;
   }
 
   private initFromStorage(): void {

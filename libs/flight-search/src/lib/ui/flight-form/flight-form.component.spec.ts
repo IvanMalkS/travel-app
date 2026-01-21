@@ -129,7 +129,7 @@ describe('FlightFormComponent', () => {
       expect(await destSelect.isEmpty()).toBe(true);
     });
 
-    it('should filter destination airports (exclude selected origin)', async () => {
+    it('should filter destination airports with exclude selected origin', async () => {
       const originSelect = await loader.getHarness(
         MatSelectHarness.with({ selector: '[formControlName="origin"]' }),
       );

@@ -150,7 +150,7 @@ describe('FlightService', () => {
       service = TestBed.inject(FlightService);
     });
 
-    it('should create separate segments for disconnected flights', () => {
+    it('should update segments signal when flights are added', () => {
       const f1 = createFlight(
         '1',
         mockAirportA,
@@ -158,49 +158,14 @@ describe('FlightService', () => {
         '2025-01-01T10:00',
         '2025-01-01T12:00',
       );
-      const f2 = createFlight(
-        '2',
-        mockAirportA,
-        mockAirportC,
-        '2025-01-01T14:00',
-        '2025-01-01T16:00',
-      );
+
+      expect(service.segments().length).toBe(0);
 
       service.addFlight(f1);
-      service.addFlight(f2);
 
-      const segments: Segment[] = service.segments();
-
-      expect(segments.length).toBe(2);
-      expect(segments[0].flights.length).toBe(1);
-      expect(segments[1].flights.length).toBe(1);
-    });
-
-    it('should combine connected flights into one segment', () => {
-      const f1 = createFlight(
-        '1',
-        mockAirportA,
-        mockAirportB,
-        '2025-01-01T10:00',
-        '2025-01-01T12:00',
-      );
-      const f2 = createFlight(
-        '2',
-        mockAirportB,
-        mockAirportC,
-        '2025-01-01T13:00',
-        '2025-01-01T15:00',
-      );
-
-      service.addFlight(f1);
-      service.addFlight(f2);
-
-      const segments: Segment[] = service.segments();
-
-      expect(segments.length).toBe(1);
-      expect(segments[0].flights.length).toBe(2);
+      const segments = service.segments();
+      expect(segments.length).toBeGreaterThan(0);
       expect(segments[0].flights[0].id).toBe('1');
-      expect(segments[0].flights[1].id).toBe('2');
     });
   });
 });
