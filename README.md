@@ -82,3 +82,10 @@ npx nx serve flight-planner
 
 npx nx test flight-search
 ```
+
+Docker:
+Запуск через docker compose на порте 4000
+
+```bash
+docker compose up -d
+```
