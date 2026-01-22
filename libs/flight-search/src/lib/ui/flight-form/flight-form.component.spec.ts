@@ -36,7 +36,13 @@ describe('FlightFormComponent', () => {
   });
 
   describe('Validation', () => {
-    it('should disable submit button if Arrival Time is before Departure Time', async () => {
+    it('should disable submit button if arrival time is before departure time', async () => {
+      const depDateInput = await loader.getHarness(
+        MatInputHarness.with({ selector: '[formControlName="depDate"]' }),
+      );
+      const arrDateInput = await loader.getHarness(
+        MatInputHarness.with({ selector: '[formControlName="arrDate"]' }),
+      );
       const depTimeInput = await loader.getHarness(
         MatInputHarness.with({ selector: '[formControlName="depTime"]' }),
       );
@@ -47,20 +53,11 @@ describe('FlightFormComponent', () => {
         MatButtonHarness.with({ text: 'Добавить в маршрут' }),
       );
 
+      await depDateInput.setValue('2026-01-10');
+      await arrDateInput.setValue('2026-01-10');
+
       await depTimeInput.setValue('12:00');
       await arrTimeInput.setValue('10:00');
-
-      const depDateInput = await loader.getHarness(
-        MatInputHarness.with({ selector: '[formControlName="depDate"]' }),
-      );
-      const arrDateInput = await loader.getHarness(
-        MatInputHarness.with({ selector: '[formControlName="arrDate"]' }),
-      );
-
-      const today = new Date().toLocaleDateString('en-US');
-      await depDateInput.setValue(today);
-      await arrDateInput.setValue(today);
-
       await arrTimeInput.blur();
 
       expect(await submitBtn.isDisabled()).toBe(true);

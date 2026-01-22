@@ -1,35 +1,26 @@
 /// <reference types="cypress" />
 
-// ***********************************************
-// This example commands.ts shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
+Cypress.Commands.add(
+  'addFlight',
+  (from, to, depDate, depTime, arrDate, arrTime) => {
+    cy.get('[data-testid="from"]').click();
+    cy.get('.cdk-overlay-pane mat-option').contains(from).click();
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-declare namespace Cypress {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Chainable<Subject> {
-    login(email: string, password: string): void;
-  }
-}
+    cy.get('[data-testid="to"]').click();
+    cy.get('.cdk-overlay-pane mat-option').contains(to).click();
 
-// -- This is a parent command --
-Cypress.Commands.add('login', (email, password) => {
-  console.log('Custom command example: Login', email, password);
-});
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+    cy.get('[data-testid="departure-date"]').clear();
+    cy.get('[data-testid="departure-date"]').type(depDate);
+
+    cy.get('[data-testid="departure-time"]').clear();
+    cy.get('[data-testid="departure-time"]').type(depTime);
+
+    cy.get('[data-testid="arrival-date"]').clear();
+    cy.get('[data-testid="arrival-date"]').type(arrDate);
+
+    cy.get('[data-testid="arrival-time"]').clear();
+    cy.get('[data-testid="arrival-time"]').type(arrTime);
+
+    cy.get('[data-testid="submit-flight"]').click();
+  },
+);

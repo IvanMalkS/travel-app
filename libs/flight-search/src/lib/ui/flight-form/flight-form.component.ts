@@ -7,12 +7,12 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
+  AbstractControl,
   FormBuilder,
   ReactiveFormsModule,
-  Validators,
-  AbstractControl,
   ValidationErrors,
   ValidatorFn,
+  Validators,
 } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -56,7 +56,7 @@ export class FlightFormComponent {
       arrTime: ['14:30', Validators.required],
     },
     {
-      validators: [arrivalTimeValidator],
+      validators: arrivalTimeValidator,
     },
   );
 
@@ -77,15 +77,15 @@ export class FlightFormComponent {
   protected readonly destinationAirports = computed(() => {
     const origin = this.selectedOrigin();
     if (!origin) return this.airports;
-    return this.airports.filter((airport) => airport.code !== origin.code);
+    return this.airports.filter((a) => a.code !== origin.code);
   });
 
   constructor() {
     this.form.controls.origin.valueChanges
       .pipe(takeUntilDestroyed())
       .subscribe((origin) => {
-        const currentDest = this.form.controls.destination.value;
-        if (origin && currentDest && origin.code === currentDest.code) {
+        const destination = this.form.controls.destination.value;
+        if (origin && destination && origin.code === destination.code) {
           this.form.controls.destination.reset();
         }
       });
@@ -100,75 +100,71 @@ export class FlightFormComponent {
   }
 
   protected submit(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
-    const val = this.form.getRawValue();
+    const { origin, destination, depDate, depTime, arrDate, arrTime } =
+      this.form.getRawValue();
 
     if (
-      !val.depDate ||
-      !val.depTime ||
-      !val.arrDate ||
-      !val.arrTime ||
-      !val.origin ||
-      !val.destination
+      !origin ||
+      !destination ||
+      !depDate ||
+      !depTime ||
+      !arrDate ||
+      !arrTime
     ) {
       return;
     }
 
-    const departureTime = this.setTime(new Date(val.depDate), val.depTime);
-    const arrivalTime = this.setTime(new Date(val.arrDate), val.arrTime);
-
-    if (arrivalTime <= departureTime) {
-      arrivalTime.setDate(arrivalTime.getDate() + 1);
-    }
+    const departureTime = this.buildDate(depDate, depTime);
+    const arrivalTime = this.buildDate(arrDate, arrTime);
 
     const flight: Flight = {
       id: uuidv4(),
-      origin: val.origin,
-      destination: val.destination,
+      origin,
+      destination,
       departureTime,
       arrivalTime,
     };
 
     this.add.emit(flight);
 
-    this.form.patchValue({
-      origin: val.destination,
-      destination: null,
-      depDate: val.arrDate,
-      arrDate: val.arrDate,
+    this.form.reset({
+      depDate: new Date(),
+      arrDate: new Date(),
+      depTime: '12:00',
+      arrTime: '14:30',
     });
   }
 
-  private setTime(date: Date, timeStr: string): Date {
-    const [hours, minutes] = timeStr.split(':').map(Number);
-    const newDate = new Date(date);
-    newDate.setHours(hours || 0, minutes || 0, 0, 0);
-    return newDate;
+  private buildDate(date: Date, time: string): Date {
+    const [h, m] = time.split(':').map(Number);
+    const result = new Date(date);
+    result.setHours(h ?? 0, m ?? 0, 0, 0);
+    return result;
   }
 }
 
 export const arrivalTimeValidator: ValidatorFn = (
-  group: AbstractControl,
+  control: AbstractControl,
 ): ValidationErrors | null => {
-  const val = group.getRawValue();
+  const { depDate, depTime, arrDate, arrTime } = control.getRawValue();
 
-  if (!val.depDate || !val.depTime || !val.arrDate || !val.arrTime) {
+  if (!depDate || !depTime || !arrDate || !arrTime) {
     return null;
   }
 
-  const [depHours, depMinutes] = val.depTime.split(':').map(Number);
-  const [arrHours, arrMinutes] = val.arrTime.split(':').map(Number);
+  const dep = new Date(depDate);
+  const arr = new Date(arrDate);
 
-  const dep = new Date(val.depDate);
-  dep.setHours(depHours, depMinutes);
+  const [dh, dm] = depTime.split(':').map(Number);
+  const [ah, am] = arrTime.split(':').map(Number);
 
-  const arr = new Date(val.arrDate);
-  arr.setHours(arrHours, arrMinutes);
+  dep.setHours(dh, dm, 0, 0);
+  arr.setHours(ah, am, 0, 0);
 
-  if (arr <= dep) {
-    return { arrivalInvalid: true };
-  }
-
-  return null;
+  return arr > dep ? null : { arrivalInvalid: true };
 };

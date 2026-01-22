@@ -1,6 +1,6 @@
-<div class="list-container">
+<div class="list-container" data-testid="segment-list">
   @for (segment of segments(); track $index) {
-    <mat-card class="segment-card">
+    <mat-card class="segment-card" data-testid="segment">
       <mat-card-header>
         <mat-card-title>Маршрут #{{ $index + 1 }}</mat-card-title>
         <mat-card-subtitle
@@ -11,10 +11,14 @@
         <div class="stepper">
           @for (flight of segment.flights; track flight.id; let last = $last) {
             <div class="step">
-              <span class="city">{{ flight.origin.city }}</span>
+              <span class="city" data-testid="segment-city">{{
+                flight.origin.city
+              }}</span>
               <span class="arrow">→</span>
               @if (last) {
-                <span class="city">{{ flight.destination.city }}</span>
+                <span class="city" data-testid="segment-city">{{
+                  flight.destination.city
+                }}</span>
               }
             </div>
           }

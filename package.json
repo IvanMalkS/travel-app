@@ -6,6 +6,7 @@
     "start": "nx serve flight-planner",
     "build": "nx build flight-planner",
     "test": "nx test flight-search",
+    "e2e:ui": "npx nx open flight-planner-e2e",
     "lint": "nx run-many -t lint",
     "prepare": "husky"
   },

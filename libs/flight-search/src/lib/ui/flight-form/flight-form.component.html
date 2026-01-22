@@ -1,10 +1,15 @@
-<form [formGroup]="form" (ngSubmit)="submit()" class="flight-form">
+<form
+  [formGroup]="form"
+  (ngSubmit)="submit()"
+  class="flight-form"
+  data-testid="flight-form"
+>
   <h3>Добавить перелет</h3>
 
   <div class="row">
     <mat-form-field appearance="outline">
       <mat-label>Откуда</mat-label>
-      <mat-select formControlName="origin">
+      <mat-select formControlName="origin" data-testid="from">
         @for (airport of airports; track airport.code) {
           <mat-option [value]="airport"
             >{{ airport.city }} ({{ airport.code }})</mat-option
@@ -15,7 +20,7 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Куда</mat-label>
-      <mat-select formControlName="destination">
+      <mat-select formControlName="destination" data-testid="to">
         @for (airport of destinationAirports(); track airport.code) {
           <mat-option [value]="airport"
             >{{ airport.city }} ({{ airport.code }})</mat-option
@@ -28,7 +33,12 @@
   <div class="row">
     <mat-form-field appearance="outline">
       <mat-label>Дата вылета</mat-label>
-      <input matInput [matDatepicker]="pickerDep" formControlName="depDate" />
+      <input
+        matInput
+        [matDatepicker]="pickerDep"
+        formControlName="depDate"
+        data-testid="departure-date"
+      />
       <mat-datepicker-toggle
         matIconSuffix
         [for]="pickerDep"
@@ -38,7 +48,12 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Время вылета</mat-label>
-      <input matInput type="time" formControlName="depTime" />
+      <input
+        matInput
+        type="time"
+        formControlName="depTime"
+        data-testid="departure-time"
+      />
     </mat-form-field>
   </div>
 
@@ -50,6 +65,7 @@
         [matDatepicker]="pickerArr"
         formControlName="arrDate"
         [min]="minArrivalDate()"
+        data-testid="arrival-date"
       />
       <mat-datepicker-toggle
         matIconSuffix
@@ -60,7 +76,12 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Время прилета</mat-label>
-      <input matInput type="time" formControlName="arrTime" />
+      <input
+        matInput
+        type="time"
+        formControlName="arrTime"
+        data-testid="arrival-time"
+      />
     </mat-form-field>
   </div>
 
@@ -75,6 +96,7 @@
     color="primary"
     type="submit"
     [disabled]="form.invalid"
+    data-testid="submit-flight"
   >
     Добавить в маршрут
   </button>

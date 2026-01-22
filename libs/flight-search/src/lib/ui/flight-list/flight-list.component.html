@@ -1,6 +1,6 @@
-<div class="list-container">
+<div class="list-container" data-testid="flight-list">
   @for (flight of flights(); track flight.id) {
-    <mat-card class="flight-card">
+    <mat-card class="flight-card" data-testid="flight">
       <mat-card-content>
         <div class="flight-info">
           <strong>{{ flight.origin.city }}</strong> ({{ flight.origin.code }}) →
@@ -14,7 +14,12 @@
         </div>
       </mat-card-content>
       <mat-card-actions align="end">
-        <button mat-icon-button color="warn" (click)="delete.emit(flight.id)">
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="delete.emit(flight.id)"
+          data-testid="delete-flight"
+        >
           <mat-icon>delete</mat-icon>
         </button>
       </mat-card-actions>
