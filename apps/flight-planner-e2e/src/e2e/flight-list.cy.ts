@@ -13,7 +13,7 @@ describe('Flight List', () => {
       '19:30',
     );
 
-    cy.get('[data-testid="flight"]:visible').should('have.length', 1);
+    cy.get('[data-testid="flight"]').should('have.length', 1);
 
     cy.get('[data-testid="flight"]')
       .first()
@@ -21,6 +21,6 @@ describe('Flight List', () => {
         cy.get('[data-testid="delete-flight"]').click();
       });
 
-    cy.get('[data-testid="flight"]:visible').should('have.length', 0);
+    cy.get('[data-testid="flight"]').should('have.length', 0);
   });
 });

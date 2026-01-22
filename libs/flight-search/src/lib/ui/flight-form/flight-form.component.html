@@ -7,9 +7,9 @@
   <h3>Добавить перелет</h3>
 
   <div class="row">
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" data-testid="from">
       <mat-label>Откуда</mat-label>
-      <mat-select formControlName="origin" data-testid="from">
+      <mat-select formControlName="origin">
         @for (airport of airports; track airport.code) {
           <mat-option [value]="airport"
             >{{ airport.city }} ({{ airport.code }})</mat-option
@@ -18,9 +18,9 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" data-testid="to">
       <mat-label>Куда</mat-label>
-      <mat-select formControlName="destination" data-testid="to">
+      <mat-select formControlName="destination">
         @for (airport of destinationAirports(); track airport.code) {
           <mat-option [value]="airport"
             >{{ airport.city }} ({{ airport.code }})</mat-option

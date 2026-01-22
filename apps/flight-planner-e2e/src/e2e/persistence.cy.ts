@@ -13,7 +13,7 @@ describe('Persistence', () => {
 
     cy.reload();
 
-    cy.get('[data-testid="flight-list"]:visible').within(() => {
+    cy.get('[data-testid="flight-list"]').within(() => {
       cy.get('[data-testid="flight"]').should('have.length', 1);
     });
   });

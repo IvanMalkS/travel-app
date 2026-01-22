@@ -5,6 +5,8 @@ import { signal, WritableSignal } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { Flight, Segment } from '../../models';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { BehaviorSubject } from 'rxjs';
 
 jest.mock('uuid', () => ({
   v4: () => 'test-uuid-container',
@@ -14,6 +16,8 @@ describe('FlightContainerComponent', () => {
   let component: FlightContainerComponent;
   let fixture: ComponentFixture<FlightContainerComponent>;
 
+  const breakpointSubject = new BehaviorSubject({ matches: false });
+
   const mockFlightService = {
     flights: signal<Flight[]>([]),
     segments: signal<Segment[]>([]),
@@ -21,17 +25,24 @@ describe('FlightContainerComponent', () => {
     removeFlight: jest.fn(),
   };
 
+  const mockBreakpointObserver = {
+    observe: jest.fn().mockReturnValue(breakpointSubject.asObservable()),
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FlightContainerComponent],
       providers: [
         { provide: FlightService, useValue: mockFlightService },
+        { provide: BreakpointObserver, useValue: mockBreakpointObserver },
         provideNoopAnimations(),
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FlightContainerComponent);
     component = fixture.componentInstance;
+
+    breakpointSubject.next({ matches: false });
     fixture.detectChanges();
   });
 
@@ -43,6 +54,18 @@ describe('FlightContainerComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should toggle layout based on BreakpointObserver', () => {
+    breakpointSubject.next({ matches: false });
+    fixture.detectChanges();
+    expect(fixture.debugElement.query(By.css('.desktop-grid'))).toBeTruthy();
+    expect(fixture.debugElement.query(By.css('mat-tab-group'))).toBeFalsy();
+
+    breakpointSubject.next({ matches: true });
+    fixture.detectChanges();
+    expect(fixture.debugElement.query(By.css('.desktop-grid'))).toBeFalsy();
+    expect(fixture.debugElement.query(By.css('mat-tab-group'))).toBeTruthy();
   });
 
   describe('Integration with FlightFormComponent', () => {

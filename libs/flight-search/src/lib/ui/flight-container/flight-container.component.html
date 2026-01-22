@@ -1,35 +1,20 @@
 <div class="container" data-testid="page-flight-planner">
-  <h1>Конструктор маршрутов</h1>
+  <header>
+    <h1>Конструктор маршрутов</h1>
+  </header>
 
   <div class="layout">
-    <div class="left-panel">
+    <aside class="sidebar">
       <lib-flight-form
         (add)="flightService.addFlight($event)"
       ></lib-flight-form>
-    </div>
+    </aside>
 
-    <div class="right-panel">
-      <div class="desktop-content">
-        <div class="section">
-          <h3>Все перелеты</h3>
-          <lib-flight-list
-            [flights]="flightService.flights()"
-            (delete)="flightService.removeFlight($event)"
-          >
-          </lib-flight-list>
-        </div>
-
-        <div class="section">
-          <h3>Сложные маршруты</h3>
-          <lib-segment-list [segments]="flightService.segments()">
-          </lib-segment-list>
-        </div>
-      </div>
-
-      <div class="mobile-content">
-        <mat-tab-group animationDuration="0ms">
+    <main class="content-area">
+      @if (isMobile()) {
+        <mat-tab-group color="primary" dynamicHeight>
           <mat-tab label="Все перелеты">
-            <div class="tab-wrapper">
+            <div class="tab-padding">
               <lib-flight-list
                 [flights]="flightService.flights()"
                 (delete)="flightService.removeFlight($event)"
@@ -37,14 +22,33 @@
               </lib-flight-list>
             </div>
           </mat-tab>
-          <mat-tab label="Сегменты">
-            <div class="tab-wrapper">
-              <lib-segment-list [segments]="flightService.segments()">
-              </lib-segment-list>
+          <mat-tab label="Маршруты">
+            <div class="tab-padding">
+              <lib-segment-list
+                [segments]="flightService.segments()"
+              ></lib-segment-list>
             </div>
           </mat-tab>
         </mat-tab-group>
-      </div>
-    </div>
+      } @else {
+        <div class="desktop-grid">
+          <section class="results-section">
+            <h3>Все перелеты</h3>
+            <lib-flight-list
+              [flights]="flightService.flights()"
+              (delete)="flightService.removeFlight($event)"
+            >
+            </lib-flight-list>
+          </section>
+
+          <section class="results-section">
+            <h3>Сегменты</h3>
+            <lib-segment-list
+              [segments]="flightService.segments()"
+            ></lib-segment-list>
+          </section>
+        </div>
+      }
+    </main>
   </div>
 </div>

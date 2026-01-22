@@ -4,7 +4,11 @@ describe('Flight Form Validation', () => {
   });
 
   it('should prevent arrival before departure', () => {
-    cy.get('[data-testid="from"]').click();
+    cy.get('.desktop-grid').should('be.visible');
+
+    cy.get('[data-testid="from"] .mat-mdc-select-trigger')
+      .should('be.visible')
+      .click({ force: true });
 
     cy.get('mat-option').contains('Новосибирск').click();
 
