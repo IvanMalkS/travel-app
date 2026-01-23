@@ -108,6 +108,7 @@ export class FlightFormComponent {
     const { origin, destination, depDate, depTime, arrDate, arrTime } =
       this.form.getRawValue();
 
+    // Под это хотел написать кастомный тайп гуард, но у формы очень много вложенных типов
     if (
       !origin ||
       !destination ||
@@ -123,6 +124,10 @@ export class FlightFormComponent {
     const arrivalTime = this.buildDate(arrDate, arrTime);
 
     const flight: Flight = {
+      /*
+       * Как я понял с track история такая же как с Key в реакт
+       * и без него производительность падает, а в ангуяре вообще не билдиться
+       */
       id: uuidv4(),
       origin,
       destination,

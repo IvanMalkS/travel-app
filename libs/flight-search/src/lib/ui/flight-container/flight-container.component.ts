@@ -26,9 +26,11 @@ export class FlightContainerComponent {
   protected readonly flightService = inject(FlightService);
   private readonly breakpointObserver = inject(BreakpointObserver);
 
-  // Сначала просто через css скрывал,
-  // потом нащёл в доке этот метод https://material.angular.dev/cdk/layout/overview
-  // чтобы DOM был чище и e2e проще писать было
+  /*
+   * Сначала просто через css скрывал,
+   * потом нащёл в доке этот метод https://material.angular.dev/cdk/layout/overview
+   * чтобы DOM был чище и e2e проще писать было, но анимации решили по другому )
+   */
   protected readonly isMobile = toSignal(
     this.breakpointObserver
       .observe([Breakpoints.Handset, Breakpoints.TabletPortrait])

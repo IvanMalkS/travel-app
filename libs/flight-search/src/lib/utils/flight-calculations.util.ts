@@ -1,8 +1,10 @@
 import { Flight, Segment } from '../models';
 
+// Вынес в утилиты для будущего переиспользования и удобства тестирования
 export function buildSegments(flights: Flight[]): Segment[] {
   if (!flights || flights.length === 0) return [];
 
+  // В нашем случае массив сортируется уже в сторе, но я решил сделать чистую функцию
   const sortedFlights = [...flights].sort(
     (a, b) => a.departureTime.getTime() - b.departureTime.getTime(),
   );

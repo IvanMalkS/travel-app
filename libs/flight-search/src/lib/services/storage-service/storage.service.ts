@@ -1,6 +1,7 @@
 import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
+// Сделал как отдельный сервис, чтобы увеличить абстракцию и не мешать объекты
 @Injectable({
   providedIn: 'root',
 })
