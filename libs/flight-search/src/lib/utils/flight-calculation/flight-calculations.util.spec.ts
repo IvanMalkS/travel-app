@@ -67,7 +67,7 @@ describe('flightCalculationsUtil', () => {
       const expectedMs = 6 * 60 * 60 * 1000;
 
       expect(result[0].totalDurationMs).toBe(expectedMs);
-      expect(result[0].totalDurationFormated).toBe('6h');
+      expect(result[0].totalDurationFormated).toBe('6ч');
     });
 
     it('should handle the specific scenario from the technical specification', () => {

@@ -13,10 +13,10 @@ describe('DurationPipe', () => {
 
   it('should transform milliseconds to formatted string', () => {
     const oneHourThirtyMins = 1 * 60 * 60 * 1000 + 30 * 60 * 1000;
-    expect(pipe.transform(oneHourThirtyMins)).toBe('1h 30m');
+    expect(pipe.transform(oneHourThirtyMins)).toBe('1ч 30м');
   });
 
   it('should handle zero value', () => {
-    expect(pipe.transform(0)).toBe('0m');
+    expect(pipe.transform(0)).toBe('0м');
   });
 });

@@ -92,7 +92,7 @@ describe('SegmentListComponent', () => {
     const subtitle = await card.getSubtitleText();
 
     expect(title).toBe('Маршрут #1');
-    expect(subtitle).toContain('2 пересадок');
+    expect(subtitle).toContain('Пересадок: 2');
   });
 
   it('should display the chain of cities', async () => {

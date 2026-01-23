@@ -22,6 +22,7 @@ export class StorageService {
     try {
       return JSON.parse(item) as T;
     } catch (error) {
+      // Вот тут лучше какую то всплывашку сделать
       console.error(`Ошибка получения данных по key "${key}"`, error);
       return null;
     }
