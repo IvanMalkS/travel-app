@@ -28,3 +28,7 @@
   background: var(--mat-sys-surface-container);
   border-radius: 8px;
 }
+.segment-subtitle {
+  display: flex;
+  flex-direction: column;
+}

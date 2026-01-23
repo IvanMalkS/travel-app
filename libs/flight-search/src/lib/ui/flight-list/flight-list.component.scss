@@ -21,3 +21,16 @@
   background: var(--mat-sys-surface-container);
   border-radius: 8px;
 }
+
+.duration-tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: color-mix(in srgb, var(--mat-sys-on-surface) 60%, transparent);
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}

@@ -1,7 +1,7 @@
 import { Injectable, signal, computed, inject, effect } from '@angular/core';
 import { Flight, FlightRawFromJson } from '../../models';
 import { StorageService } from '../storage-service/storage.service';
-import { buildSegments } from '../../utils/flight-calculations.util';
+import { buildSegments } from '../../utils/flight-calculation/flight-calculations.util';
 
 @Injectable({
   providedIn: 'root',

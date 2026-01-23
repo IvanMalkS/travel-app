@@ -1,4 +1,5 @@
-import { Flight, Segment } from '../models';
+import { Flight, Segment } from '../../models';
+import { formatDuration } from '../formated-time/formated-time.util';
 
 // Вынес в утилиты для будущего переиспользования и удобства тестирования
 export function buildSegments(flights: Flight[]): Segment[] {
@@ -23,12 +24,27 @@ export function buildSegments(flights: Flight[]): Segment[] {
     if (isConnected) {
       currentSegment.push(curr);
     } else {
-      segments.push({ flights: [...currentSegment] });
+      segments.push(createSegment(currentSegment));
       currentSegment = [curr];
     }
   }
 
-  segments.push({ flights: currentSegment });
+  segments.push(createSegment(currentSegment));
 
   return segments;
+}
+
+// Допом сделал, чтобы с пайпом поработать и вывести время
+function createSegment(flights: Flight[]): Segment {
+  const firstFlight = flights[0];
+  const lastFlight = flights[flights.length - 1];
+
+  const durationMs =
+    lastFlight.arrivalTime.getTime() - firstFlight.departureTime.getTime();
+
+  return {
+    flights: [...flights],
+    totalDurationMs: durationMs,
+    totalDurationFormated: formatDuration(durationMs),
+  };
 }

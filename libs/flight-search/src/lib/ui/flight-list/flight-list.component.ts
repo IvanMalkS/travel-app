@@ -9,11 +9,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { Flight } from '../../models';
+import { DurationPipe } from '../../pipes/duration/duration.pipe';
 
 @Component({
   selector: 'lib-flight-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    DurationPipe,
+  ],
   templateUrl: './flight-list.component.html',
   styleUrl: './flight-list.component.scss',
 })

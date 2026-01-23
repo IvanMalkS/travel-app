@@ -12,6 +12,13 @@
           {{ flight.departureTime | date: 'dd.MM.yyyy HH:mm' }} -
           {{ flight.arrivalTime | date: 'dd.MM.yyyy HH:mm' }}
         </div>
+        <div class="duration-tag">
+          <mat-icon>schedule</mat-icon>
+          <span>{{
+            flight.arrivalTime.getTime() - flight.departureTime.getTime()
+              | duration
+          }}</span>
+        </div>
       </mat-card-content>
       <mat-card-actions align="end">
         <button

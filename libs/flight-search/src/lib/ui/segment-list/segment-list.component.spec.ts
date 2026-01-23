@@ -30,7 +30,6 @@ describe('SegmentListComponent', () => {
 
   const mockSegment: Segment = {
     flights: [mockFlight1, mockFlight2],
-    totalDuration: '8h',
   };
 
   beforeEach(async () => {
