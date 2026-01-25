@@ -11,4 +11,4 @@ export const AIRPORTS: Airport[] = [
   { code: 'AMS', city: 'Амстердам' },
   { code: 'BER', city: 'Берлин' },
   { code: 'BKK', city: 'Бангкок' },
-];
+] as const satisfies Airport[];
