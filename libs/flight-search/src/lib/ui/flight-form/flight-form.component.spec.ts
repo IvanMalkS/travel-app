@@ -7,11 +7,17 @@ import { MatSelectHarness } from '@angular/material/select/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { By } from '@angular/platform-browser';
-import { AIRPORTS } from '../../const';
+import { AIRPORTS_TOKEN } from '../../tokens/airports.token';
 
 jest.mock('uuid', () => ({
   v4: () => 'test-uuid-1234',
 }));
+
+const MOCK_AIRPORTS = [
+  { code: 'OVB', city: 'Новосибирск' },
+  { code: 'SVO', city: 'Москва' },
+  { code: 'IST', city: 'Стамбул' },
+];
 
 describe('FlightFormComponent', () => {
   let component: FlightFormComponent;
@@ -21,7 +27,7 @@ describe('FlightFormComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FlightFormComponent, ReactiveFormsModule],
-      providers: [],
+      providers: [{ provide: AIRPORTS_TOKEN, useValue: MOCK_AIRPORTS }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FlightFormComponent);
@@ -87,10 +93,14 @@ describe('FlightFormComponent', () => {
       );
 
       await originSelect.open();
-      await originSelect.clickOptions({ text: new RegExp(AIRPORTS[0].city) });
+      await originSelect.clickOptions({
+        text: new RegExp(MOCK_AIRPORTS[0].city),
+      });
 
       await destSelect.open();
-      await destSelect.clickOptions({ text: new RegExp(AIRPORTS[1].city) });
+      await destSelect.clickOptions({
+        text: new RegExp(MOCK_AIRPORTS[1].city),
+      });
 
       await depTimeInput.setValue('12:00');
       await arrTimeInput.setValue('14:00');
@@ -146,7 +156,7 @@ describe('FlightFormComponent', () => {
       const found = destTexts.find((text) => text === firstOriginText);
       expect(found).toBeUndefined();
 
-      expect(destOptions.length).toBe(AIRPORTS.length - 1);
+      expect(destOptions.length).toBe(MOCK_AIRPORTS.length - 1);
     });
   });
 });

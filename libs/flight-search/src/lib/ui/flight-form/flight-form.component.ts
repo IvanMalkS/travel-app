@@ -23,7 +23,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { v4 as uuidv4 } from 'uuid';
 import { Airport, Flight } from '../../models';
-import { AIRPORTS } from '../../const';
+import { AIRPORTS_TOKEN } from '../../tokens/airports.token';
 
 @Component({
   selector: 'lib-flight-form',
@@ -43,7 +43,9 @@ import { AIRPORTS } from '../../const';
 export class FlightFormComponent {
   readonly add = output<Flight>();
 
-  protected readonly airports = AIRPORTS;
+  protected readonly airportsData = inject(AIRPORTS_TOKEN);
+
+  protected readonly airports = this.airportsData;
   private readonly fb = inject(FormBuilder);
 
   protected readonly form = this.fb.group(
