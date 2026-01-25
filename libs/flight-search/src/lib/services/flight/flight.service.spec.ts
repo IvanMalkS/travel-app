@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { FlightService } from './flight.service';
 import { StorageService } from '../storage-service/storage.service';
 import { Flight, Airport, FlightRawFromJson } from '../../models';
+import { FLIGHT_STORAGE_TOKEN } from '../../tokens/flight-storage-key.token';
 
 const mockAirportA: Airport = { code: 'A', city: 'City A' };
 const mockAirportB: Airport = { code: 'B', city: 'City B' };
@@ -23,6 +24,8 @@ function createFlight(
 }
 
 describe('FlightService', () => {
+  const TEST_STORAGE_KEY = 'test_flights_key';
+
   let service: FlightService;
   let storageServiceMock: { getItem: jest.Mock; setItem: jest.Mock };
 
@@ -38,6 +41,7 @@ describe('FlightService', () => {
       providers: [
         FlightService,
         { provide: StorageService, useValue: storageServiceMock },
+        { provide: FLIGHT_STORAGE_TOKEN, useValue: TEST_STORAGE_KEY },
       ],
     });
   });
@@ -65,7 +69,7 @@ describe('FlightService', () => {
 
       const flights: Flight[] = service.flights();
 
-      expect(storageServiceMock.getItem).toHaveBeenCalledWith('flight_data');
+      expect(storageServiceMock.getItem).toHaveBeenCalledWith(TEST_STORAGE_KEY);
       expect(flights.length).toBe(1);
       expect(flights[0].id).toBe('1');
       expect(flights[0].departureTime).toBeInstanceOf(Date);
@@ -92,7 +96,7 @@ describe('FlightService', () => {
       expect(storageServiceMock.setItem).toHaveBeenCalledTimes(1);
 
       const [key, value] = storageServiceMock.setItem.mock.calls[0];
-      expect(key).toBe('flight_data');
+      expect(key).toBe(TEST_STORAGE_KEY);
       expect(value[0].id).toBe('1');
     });
   });

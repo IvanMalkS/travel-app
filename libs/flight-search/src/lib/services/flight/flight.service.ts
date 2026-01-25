@@ -2,13 +2,16 @@ import { Injectable, signal, computed, inject, effect } from '@angular/core';
 import { Flight, FlightRawFromJson } from '../../models';
 import { StorageService } from '../storage-service/storage.service';
 import { buildSegments } from '../../utils/flight-calculation/flight-calculations.util';
+import { FLIGHT_STORAGE_TOKEN } from '../../tokens/flight-storage-key.token';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FlightService {
   private readonly storage = inject(StorageService);
-  private readonly STORAGE_KEY = 'flight_data';
+  private readonly storageKeyData = inject(FLIGHT_STORAGE_TOKEN);
+
+  private readonly STORAGE_KEY = this.storageKeyData;
 
   private readonly _flights = signal<Flight[]>([]);
 
