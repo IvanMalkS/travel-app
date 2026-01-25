@@ -1,6 +1,6 @@
 import { Airport } from '../models/airport.interface';
 
-export const AIRPORTS: Airport[] = [
+export const AIRPORTS = [
   { code: 'OVB', city: 'Новосибирск' },
   { code: 'SVO', city: 'Москва' },
   { code: 'IST', city: 'Стамбул' },
